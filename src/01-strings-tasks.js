@@ -18,8 +18,8 @@
  *   'aa',''    => 'aa'
  *   '',  'bb'  => 'bb'
  */
-function concatenateStrings(/* value1, value2 */) {
-  throw new Error('Not implemented');
+function concatenateStrings(a, b) {
+  return a + b;
 }
 
 
@@ -34,8 +34,8 @@ function concatenateStrings(/* value1, value2 */) {
  *   'b'     => 1
  *   ''      => 0
  */
-function getStringLength(/* value */) {
-  throw new Error('Not implemented');
+function getStringLength(value) {
+  return value.length;
 }
 
 /**
@@ -51,8 +51,8 @@ function getStringLength(/* value */) {
  *   'John','Doe'      => 'Hello, John Doe!'
  *   'Chuck','Norris'  => 'Hello, Chuck Norris!'
  */
-function getStringFromTemplate(/* firstName, lastName */) {
-  throw new Error('Not implemented');
+function getStringFromTemplate(firstName, lastName) {
+  return `Hello, ${firstName} ${lastName}!`;
 }
 
 /**
@@ -65,8 +65,8 @@ function getStringFromTemplate(/* firstName, lastName */) {
  *   'Hello, John Doe!' => 'John Doe'
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
-function extractNameFromTemplate(/* value */) {
-  throw new Error('Not implemented');
+function extractNameFromTemplate(source) {
+  return source.slice(7, -1);
 }
 
 
@@ -80,8 +80,8 @@ function extractNameFromTemplate(/* value */) {
  *   'John Doe'  => 'J'
  *   'cat'       => 'c'
  */
-function getFirstChar(/* value */) {
-  throw new Error('Not implemented');
+function getFirstChar(value) {
+  return value.charAt(0);
 }
 
 /**
@@ -95,8 +95,8 @@ function getFirstChar(/* value */) {
  *   'cat'              => 'cat'
  *   '\tHello, World! ' => 'Hello, World!'
  */
-function removeLeadingAndTrailingWhitespaces(/* value */) {
-  throw new Error('Not implemented');
+function removeLeadingAndTrailingWhitespaces(value) {
+  return value.trim();
 }
 
 /**
@@ -110,8 +110,8 @@ function removeLeadingAndTrailingWhitespaces(/* value */) {
  *   'A', 5  => 'AAAAA'
  *   'cat', 3 => 'catcatcat'
  */
-function repeatString(/* value, count */) {
-  throw new Error('Not implemented');
+function repeatString(value, count) {
+  return value.repeat(count);
 }
 
 /**
@@ -126,8 +126,8 @@ function repeatString(/* value, count */) {
  *   'I like legends', 'end' => 'I like legs',
  *   'ABABAB','BA' => 'ABAB'
  */
-function removeFirstOccurrences(/* str, value */) {
-  throw new Error('Not implemented');
+function removeFirstOccurrences(str, value) {
+  return str.replace(value, '');
 }
 
 /**
@@ -141,8 +141,9 @@ function removeFirstOccurrences(/* str, value */) {
  *   '<span>' => 'span'
  *   '<a>' => 'a'
  */
-function unbracketTag(/* str */) {
-  throw new Error('Not implemented');
+function unbracketTag(str) {
+  const regex = /^<?(?<content>.*?)>?$/;
+  return str.match(regex).groups.content;
 }
 
 
@@ -156,8 +157,8 @@ function unbracketTag(/* str */) {
  *   'Thunderstruck' => 'THUNDERSTRUCK'
  *  'abcdefghijklmnopqrstuvwxyz' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
  */
-function convertToUpperCase(/* str */) {
-  throw new Error('Not implemented');
+function convertToUpperCase(str) {
+  return str.toUpperCase();
 }
 
 /**
@@ -175,8 +176,8 @@ function convertToUpperCase(/* str */) {
  *   ],
  *   'info@gmail.com' => ['info@gmail.com']
  */
-function extractEmails(/* str */) {
-  throw new Error('Not implemented');
+function extractEmails(str) {
+  return str.split(';');
 }
 
 /**
@@ -202,8 +203,11 @@ function extractEmails(/* str */) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  const firstLine = `┌${'─'.repeat(width - 2)}┐\n`;
+  const regularLines = `│${' '.repeat(width - 2)}│\n`.repeat(height - 2);
+  const lastLine = `└${'─'.repeat(width - 2)}┘\n`;
+  return `${firstLine}${regularLines}${lastLine}`;
 }
 
 
@@ -223,8 +227,39 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const leftLowerCaseLetterCode = 'a'.charCodeAt(0);
+  const rightLowerCaseLetterCode = 'z'.charCodeAt(0);
+  const leftUpperCaseLetterCode = 'A'.charCodeAt(0);
+  const rightUpperCaseLetterCode = 'Z'.charCodeAt(0);
+
+  const isLowerCaseLetter = (c) => {
+    const letterCode = c.charCodeAt(0);
+    return letterCode >= leftLowerCaseLetterCode && letterCode <= rightLowerCaseLetterCode;
+  };
+
+  const isUpperCaseLetter = (c) => {
+    const letterCode = c.charCodeAt(0);
+    return letterCode >= leftUpperCaseLetterCode && letterCode <= rightUpperCaseLetterCode;
+  };
+
+  const lowerCaseROTMedian = leftLowerCaseLetterCode + 12;
+  const upperCaseROTMedian = leftUpperCaseLetterCode + 12;
+
+  return str.split('').map((c) => {
+    const charCode = c.charCodeAt(0);
+    let shift;
+
+    if (isLowerCaseLetter(c)) {
+      shift = charCode <= lowerCaseROTMedian ? 13 : -13;
+    } else if (isUpperCaseLetter(c)) {
+      shift = charCode <= upperCaseROTMedian ? 13 : -13;
+    } else {
+      shift = 0;
+    }
+
+    return String.fromCharCode(charCode + shift);
+  }).join('');
 }
 
 /**
@@ -240,8 +275,8 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  return (typeof value) === 'string' || (value instanceof String);
 }
 
 
@@ -269,8 +304,35 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const decodeFirstDigit = (c) => {
+    switch (c) {
+      case 'A':
+        return 0;
+      case 'J':
+        return 10;
+      case 'Q':
+        return 11;
+      case 'K':
+        return 12;
+      default:
+        return +c - 1;
+    }
+  };
+  const decodeSecondDigit = (c) => {
+    const mapping = {
+      '♣': 0,
+      '♦': 1,
+      '♥': 2,
+      '♠': 3,
+    };
+    return mapping[c];
+  };
+
+  const firstDigit = decodeFirstDigit(value.slice(0, -1));
+  const secondDigit = decodeSecondDigit(value.charAt(value.length - 1));
+
+  return secondDigit * 13 + firstDigit;
 }
 
 
