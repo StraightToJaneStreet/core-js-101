@@ -31,12 +31,12 @@ function getFizzBuzz(num) {
   // for (let i = 0; i < num; i++) {
   //   const fizz = i % 3 === 0;
   //   const buzz = i % 5 === 0;
-  //   const line = `${fizz ? 'Fizz' : ''}${buzz ? 'Buzz' : ''}${!fizz && !buzz ? i : ''}`;    
+  //   const line = `${fizz ? 'Fizz' : ''}${buzz ? 'Buzz' : ''}${!fizz && !buzz ? i : ''}`;
   //   console.log(line);
   // }
   const fizz = num % 3 === 0;
   const buzz = num % 5 === 0;
-  const line = `${fizz ? 'Fizz' : ''}${buzz ? 'Buzz' : ''}${!fizz && !buzz ? i : ''}`;    
+  const line = `${fizz ? 'Fizz' : ''}${buzz ? 'Buzz' : ''}${!fizz && !buzz ? num : ''}`;
 
   return line;
 }
@@ -53,10 +53,10 @@ function getFizzBuzz(num) {
  *   5  => 120
  *   10 => 3628800
  */
-function getFactorial(/* n */) {
-  const result = 1;
-  for (let i = 2; i <= n; i++) {
-    result = result * i;
+function getFactorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i += 1) {
+    result *= i;
   }
   return result;
 }
@@ -75,8 +75,8 @@ function getFactorial(/* n */) {
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
 function getSumBetweenNumbers(n1, n2) {
-  const endBorderSum = (n2 - 1) * n2 / 2;
-  const startBorderSum = (n1 - 1) * n1 / 2;
+  const endBorderSum = ((n2 - 1) * n2) / 2;
+  const startBorderSum = ((n1 - 1) * n1) / 2;
 
   return endBorderSum - startBorderSum;
 }
@@ -137,12 +137,19 @@ function isTriangle(a, b, c) {
 function doRectanglesOverlap(rect1, rect2) {
   const inrange = (p, l, r) => (p >= l) && (p <= r);
 
-  const [x0, y0, xx0, yy0] = [rect1.left, rect1.top, rect1.left + rect1.width, rect1.top + rect1.height];
-  const [x1, y1, xx1, yy1] = [rect1.left, rect1.top, rect1.left + rect1.width, rect1.top + rect1.height];
+  const [x0, y0, xx0, yy0] = [
+    rect1.left, rect1.top,
+    rect1.left + rect1.width, rect1.top + rect1.height,
+  ];
+
+  const [x1, y1, xx1, yy1] = [
+    rect2.left, rect2.top,
+    rect2.left + rect2.width, rect2.top + rect2.height,
+  ];
 
   const first = inrange(x1, x0, xx0) && inrange(y1, y0, yy0);
   const second = inrange(x1, x0, xx0) && inrange(yy1, y0, yy0);
-  const third  = inrange(xx1, x0, xx0) && inrange(y1, y0, yy0);
+  const third = inrange(xx1, x0, xx0) && inrange(y1, y0, yy0);
   const fourth = inrange(xx1, x0, xx0) && inrange(yy1, y0, yy0);
 
   return first || second || third || fourth;
@@ -204,7 +211,7 @@ function findFirstSingleChar(str) {
     }
     return acc;
   });
-  return Object.entries(storage).filter(([_char, value]) => value === true).map(([name]) => name);
+  return Object.entries(storage).filter((item) => item.value === true).map(([name]) => name);
 }
 
 
@@ -265,11 +272,12 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
+  let buf = num;
   let base = 0;
   while (num > 0) {
-    const digit = num % 10;
+    const digit = buf % 10;
     base = base * 10 + digit;
-    num = num / 10;
+    buf /= 10;
   }
   return base;
 }
@@ -297,19 +305,22 @@ function reverseInteger(num) {
  */
 function isCreditCardNumber(ccn) {
   const rawDigits = [];
+  let bufCcn = ccn;
 
-  while (ccn > 0) {
-    const digit = ccn % 10;
-    digits.push(digit);
-    ccn = ccn / 10;
+  while (bufCcn > 0) {
+    const digit = bufCcn % 10;
+    rawDigits.push(digit);
+    bufCcn /= 10;
   }
-  
+
   const [validationDigit, cardNumber] = rawDigits;
-  cardNumberDigits.reverse();
-  cardNumberDigits.reduce((acc, digit, ind) => {
-    
-  });
-  return digitsSum % 10 === 0;
+
+  cardNumber.reverse();
+
+  const reducer = (acc, digit, ind) => acc + ((ind % 2 === 0) ? digit * 2 : digit);
+  const checkSum = cardNumber.reduce(reducer);
+
+  return (10 - (checkSum % 10)) === validationDigit;
 }
 
 /**

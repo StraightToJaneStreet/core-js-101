@@ -29,7 +29,7 @@
  *                                                    //  Ask her again.';
  */
 function willYouMarryMe(isPositiveAnswer) {
-  return Promise.resolve(isPositiveAnswer);  
+  return Promise.resolve(isPositiveAnswer);
 }
 
 
@@ -92,9 +92,10 @@ function getFastestPromise(array) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  return Promise.all(array)
-    .then(items => items.reduce(action));
+function chainPromises(array, action) {
+  const pushPromise = (result) => action(result);
+  const reducer = ((acc, prevProm) => acc.then(pushPromise, pushPromise));
+  return array.reduce(reducer, Promise.resolve());
 }
 
 module.exports = {

@@ -22,11 +22,11 @@
  */
 function Rectangle(width, height) {
   return {
-    width: width,
-    height: height,
+    width,
+    height,
     getArea() {
       return width * height;
-    }
+    },
   };
 }
 
@@ -132,13 +132,13 @@ class CssBuilder {
     return this;
   }
 
-  class() {
+  class(value) {
     this.content = `${this.content}.${value}`;
     return this;
   }
 
   attr(value) {
-    this.content = `${this.content}[${value}]`
+    this.content = `${this.content}[${value}]`;
   }
 
   pseudoClass(value) {
