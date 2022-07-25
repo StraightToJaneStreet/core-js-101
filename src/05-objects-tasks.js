@@ -58,7 +58,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-  Object.setPrototypeOf(JSON.parse(json), proto);
+  return Object.setPrototypeOf(JSON.parse(json), proto);
 }
 
 
@@ -117,9 +117,16 @@ function fromJSON(proto, json) {
  */
 
 class CssBuilder {
+  constructor() {
+    this.content = '';
+  }
+
   static combine(sel1, combinator, sel2) {
+    // console.log('sel1', sel1)
+    // console.log('sel2', sel2)
     const instance = new CssBuilder();
     instance.content = `${sel1.content} ${combinator} ${sel2.content}`;
+    return instance;
   }
 
   element(value) {
@@ -139,6 +146,7 @@ class CssBuilder {
 
   attr(value) {
     this.content = `${this.content}[${value}]`;
+    return this;
   }
 
   pseudoClass(value) {
@@ -148,6 +156,11 @@ class CssBuilder {
 
   pseudoElement(value) {
     this.content = `${this.content}::${value}`;
+    return this;
+  }
+
+  stringify() {
+    return this.content;
   }
 }
 const cssSelectorBuilder = {

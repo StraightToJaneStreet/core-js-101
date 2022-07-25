@@ -75,10 +75,11 @@ function getFactorial(n) {
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
 function getSumBetweenNumbers(n1, n2) {
-  const endBorderSum = ((n2 - 1) * n2) / 2;
-  const startBorderSum = ((n1 - 1) * n1) / 2;
-
-  return endBorderSum - startBorderSum;
+  let answer = 0;
+  for (let i = n1; i <= n2; i += 1) {
+    answer += i;
+  }
+  return answer;
 }
 
 
@@ -98,7 +99,7 @@ function getSumBetweenNumbers(n1, n2) {
  *   10,10,10 =>  true
  */
 function isTriangle(a, b, c) {
-  return (a + b >= c) && (a + c) >= b && (b + c) >= a;
+  return (a + b > c) && (a + c) > b && (b + c) > a;
 }
 
 
@@ -135,24 +136,9 @@ function isTriangle(a, b, c) {
  *
  */
 function doRectanglesOverlap(rect1, rect2) {
-  const inrange = (p, l, r) => (p >= l) && (p <= r);
-
-  const [x0, y0, xx0, yy0] = [
-    rect1.left, rect1.top,
-    rect1.left + rect1.width, rect1.top + rect1.height,
-  ];
-
-  const [x1, y1, xx1, yy1] = [
-    rect2.left, rect2.top,
-    rect2.left + rect2.width, rect2.top + rect2.height,
-  ];
-
-  const first = inrange(x1, x0, xx0) && inrange(y1, y0, yy0);
-  const second = inrange(x1, x0, xx0) && inrange(yy1, y0, yy0);
-  const third = inrange(xx1, x0, xx0) && inrange(y1, y0, yy0);
-  const fourth = inrange(xx1, x0, xx0) && inrange(yy1, y0, yy0);
-
-  return first || second || third || fourth;
+  const overlapHeight = rect1.top + rect1.height > rect2.top;
+  const overlapWidth = rect1.left + rect1.width > rect2.left;
+  return overlapHeight && overlapWidth;
 }
 
 
@@ -185,9 +171,9 @@ function doRectanglesOverlap(rect1, rect2) {
 function isInsideCircle(circle, point) {
   const sqr = (x) => x ** 2;
   const { x: circleX, y: circleY } = circle.center;
-  const dist = Math.sqrt(sqr(circleX - point.x) + sqr(circleY - point.y));
+  const dist = sqr(circleX - point.x) + sqr(circleY - point.y);
 
-  return dist <= circle.radius;
+  return dist - sqr(circle.radius) < 0;
 }
 
 
@@ -203,15 +189,14 @@ function isInsideCircle(circle, point) {
  *   'entente' => null
  */
 function findFirstSingleChar(str) {
-  const storage = str.split('').reduce((acc, char) => {
-    if (char in acc) {
-      acc[char] = false;
-    } else {
-      acc[char] = true;
+  const source = str.split('');
+  for (let i = 0; i < source.length; i += 1) {
+    const char = source[i];
+    if ([...str.matchAll(char)].length === 1) {
+      return char;
     }
-    return acc;
-  });
-  return Object.entries(storage).filter((item) => item.value === true).map(([name]) => name);
+  }
+  return null;
 }
 
 
@@ -238,7 +223,11 @@ function findFirstSingleChar(str) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-  return `${isStartIncluded ? '[' : '('}${a}, ${b}${isEndIncluded ? ']' : ')'}`;
+  const left = Math.min(a, b);
+  const right = Math.max(a, b);
+  const leftBrace = isStartIncluded ? '[' : '(';
+  const rightBrace = isEndIncluded ? ']' : ')';
+  return `${leftBrace}${left}, ${right}${rightBrace}`;
 }
 
 
@@ -255,7 +244,7 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-  return str.split('').reverse().join();
+  return str.split('').reverse().join('');
 }
 
 

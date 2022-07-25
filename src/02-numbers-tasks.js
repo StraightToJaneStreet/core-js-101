@@ -110,8 +110,12 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (0,1)     => 0
  *   (0,1) (1,2)     => 0
  */
-function getAngleBetweenVectors(/* x1, y1, x2, y2 */) {
-  throw new Error('Not implemented');
+function getAngleBetweenVectors(x1, y1, x2, y2) {
+  const sqr = (x) => x ** 2;
+  const vecprod = (x1 * x2) + (y1 * y2);
+  const lenProd = (sqr(x1) + sqr(y1)) * (sqr(x2) + sqr(y2));
+  const angle = Math.acos(vecprod / Math.sqrt(lenProd));
+  return angle;
 }
 
 /**
@@ -126,8 +130,8 @@ function getAngleBetweenVectors(/* x1, y1, x2, y2 */) {
  *     5     => 5
  *     0     => 0
  */
-function getLastDigit(/* value */) {
-  throw new Error('Not implemented');
+function getLastDigit(value) {
+  return value % 10;
 }
 
 
