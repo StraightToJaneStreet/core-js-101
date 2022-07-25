@@ -349,39 +349,28 @@ function getDigitalRoot(num) {
  *   '{[(<{[]}>)]}' = true
  */
 function isBracketsBalanced(str) {
-  return str;
-  // const isClosingBracketFor = (open, close) => {
-  //   if (open === '(' && close === ')') {
-  //     return true;
-  //   } else if (open === '[' && close === ']') {
-  //     return true;
-  //   } else if (open === '{' && close === '}') {
-  //     return true;
-  //   } else if (open === '<' && close === '>') {
-  //     return true;
-  //   }
-  //   return false;
-  // }
-  // const isClosing =
-  // const stack = [];
-  // const result = true;
-  // str.split('').reduce((acc, item) => {
-  //   if (acc.length === 0) {
-  //     acc.push(item);
-  //   } else {
-  //     const top = acc.pop();
-  //     if ()
-  //   }
-  // })
-  // for (let i = 0; i <= str.length - 1; i += 1) {
-  //   const index = brackets.indexOf(str[i]);
-  //   if (index % 2 === 0) {
-  //     stack.push(index + 1);
-  //   } else if (stack.pop() !== index) {
-  //     return false;
-  //   }
-  // }
-  // return stack.length === 0;
+  const isClosing = (c) => [')', ']', '}', '>'].includes(c);
+
+  const map = {
+    ')': '(',
+    ']': '[',
+    '}': '{',
+    '>': '<',
+  };
+
+  const stack = [];
+  let result = true;
+
+  str.split('').forEach((c) => {
+    if (isClosing(c)) {
+      if (map[c] !== stack.pop()) {
+        result = false;
+      }
+    } else {
+      stack.push(c);
+    }
+  });
+  return stack.length === 0 && result;
 }
 
 
@@ -405,8 +394,8 @@ function isBracketsBalanced(str) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -422,8 +411,20 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const result = [];
+
+  const segments = pathes.map((path) => [...path.split('/')]);
+
+
+  segments[0]
+    .map((elem, i) => {
+      if (segments.every((item) => item[i] === elem)) {
+        result.push(`${elem}/`);
+      }
+      return elem;
+    });
+  return result.join('');
 }
 
 
@@ -445,8 +446,21 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  let sumOfIteration;
+  const arr = [];
+  for (let i = 0; i < m1.length; i += 1) {
+    arr[i] = [];
+    for (let j = 0; j < m2[0].length; j += 1) {
+      sumOfIteration = 0;
+      for (let k = 0; k < m1[0].length; k += 1) {
+        sumOfIteration += m1[i][k] * m2[k][j];
+      }
+      arr[i][j] = sumOfIteration;
+    }
+  }
+
+  return arr;
 }
 
 
@@ -458,7 +472,7 @@ function getMatrixProduct(/* m1, m2 */) {
  * Function should return who is winner in the current position according to the game rules.
  * The result can be: 'X','0',undefined
  *
- * @param {array} position
+ * @param {array} p
  * @return {string}
  *
  * @example
@@ -480,8 +494,27 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(p) {
+  let winner;
+
+  if ((p[0][0] === p[1][1]) && (p[1][1] === p[2][2])) {
+    winner = p['0']['0'];
+  }
+
+  if ((p[0][2] === p[1][1]) && (p[1][1] === p[2][0])) {
+    winner = p['0']['2'];
+  }
+
+  for (let i = 0; i < p.length; i += 1) {
+    if ((p[0][i] === p[1][i]) && (p[1][i] === p[2][i])) {
+      winner = p['0'][i];
+    }
+    if ((p[i][0] === p[i][1]) && (p[i][1] === p[i][2])) {
+      winner = p[i]['0'];
+    }
+  }
+
+  return winner;
 }
 
 
