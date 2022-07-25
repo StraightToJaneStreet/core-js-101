@@ -462,9 +462,10 @@ function getIdentityMatrix(n) {
 
   const result = [];
 
-  for (let i = 0; i < n; i += 1) {
-    result.push(createLine(n, i));
-  }
+  Array(n).fill(0).map((_value, ind) => {
+    result.push(createLine(n, ind));
+    return undefined;
+  });
 
   return result;
 }

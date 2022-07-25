@@ -261,14 +261,8 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-  let buf = num;
-  let base = 0;
-  while (num > 0) {
-    const digit = buf % 10;
-    base = base * 10 + digit;
-    buf /= 10;
-  }
-  return base;
+  const base = `${num}`.split('').reverse().join('');
+  return +base;
 }
 
 
@@ -293,23 +287,24 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-  const rawDigits = [];
-  let bufCcn = ccn;
+  const digits = String(ccn).split('').reverse().map((x) => +x);
 
-  while (bufCcn > 0) {
-    const digit = bufCcn % 10;
-    rawDigits.push(digit);
-    bufCcn /= 10;
-  }
+  const validation = digits
+    .map((item, idx) => {
+      if (idx % 2 !== 0) {
+        return item * 2;
+      }
+      return item;
+    })
+    .map((x) => {
+      if (x > 9) {
+        return Math.trunc(x / 10) + (x % 10);
+      }
+      return x;
+    })
+    .reduce((a, b) => a + b);
 
-  const [validationDigit, cardNumber] = rawDigits;
-
-  cardNumber.reverse();
-
-  const reducer = (acc, digit, ind) => acc + ((ind % 2 === 0) ? digit * 2 : digit);
-  const checkSum = cardNumber.reduce(reducer);
-
-  return (10 - (checkSum % 10)) === validationDigit;
+  return validation % 10 === 0;
 }
 
 /**
@@ -326,8 +321,9 @@ function isCreditCardNumber(ccn) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const answer = `${String(num)}`.split('').map((x) => +x).reduce((acc, item) => acc + item);
+  return answer < 10 ? answer : getDigitalRoot(answer);
 }
 
 
@@ -352,8 +348,40 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  return str;
+  // const isClosingBracketFor = (open, close) => {
+  //   if (open === '(' && close === ')') {
+  //     return true;
+  //   } else if (open === '[' && close === ']') {
+  //     return true;
+  //   } else if (open === '{' && close === '}') {
+  //     return true;
+  //   } else if (open === '<' && close === '>') {
+  //     return true;
+  //   }
+  //   return false;
+  // }
+  // const isClosing =
+  // const stack = [];
+  // const result = true;
+  // str.split('').reduce((acc, item) => {
+  //   if (acc.length === 0) {
+  //     acc.push(item);
+  //   } else {
+  //     const top = acc.pop();
+  //     if ()
+  //   }
+  // })
+  // for (let i = 0; i <= str.length - 1; i += 1) {
+  //   const index = brackets.indexOf(str[i]);
+  //   if (index % 2 === 0) {
+  //     stack.push(index + 1);
+  //   } else if (stack.pop() !== index) {
+  //     return false;
+  //   }
+  // }
+  // return stack.length === 0;
 }
 
 
