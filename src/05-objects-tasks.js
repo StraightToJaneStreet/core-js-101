@@ -116,53 +116,131 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+function CssCombination(left, combinator, right) {
+  this.left = left;
+  this.right = right;
+  this.combinator = combinator;
+
+  return this;
+}
+
+CssCombination.prototype.stringify = function stringify() {
+  const leftPart = this.left.stringify();
+  const rightPart = this.right.stringify();
+  // console.log('LeftPart ', leftPart);
+  // console.log('RightPart ', rightPart);
+  return `${leftPart} ${this.combinator} ${rightPart}`;
+};
+
 class CssBuilder {
   constructor() {
-    this.content = '';
+    this.invalidArgument = 'Element, id and pseudo-element should not occur more then one time inside the selector';
+    this.invalidOrderError = 'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element';
+    this.Helement = null;
+    this.Hid = null;
+    this.HpseudoClasses = [];
+    this.HpseudoElement = null;
+    this.Hclasses = [];
+    this.Hattrs = [];
   }
 
-  static combine(sel1, combinator, sel2) {
-    // console.log('sel1', sel1)
-    // console.log('sel2', sel2)
-    const instance = new CssBuilder();
-    instance.content = `${sel1.content} ${combinator} ${sel2.content}`;
-    return instance;
+  hasElement() {
+    return this.Helement !== null;
+  }
+
+  hasClasses() {
+    return this.Hclasses.length !== 0;
+  }
+
+  hasId() {
+    return this.Hid !== null;
+  }
+
+  hasPseudoElement() {
+    return this.HpseudoElement !== null;
+  }
+
+  hasPseudoClasses() {
+    return this.HpseudoClasses.length !== 0;
+  }
+
+  hasAttributes() {
+    return this.Hattrs.length !== 0;
   }
 
   element(value) {
-    this.content = `${this.content}${value}`;
+    if (this.hasElement()) {
+      throw new Error(this.invalidArgument);
+    }
+    if (this.hasId()
+        || this.hasClasses() || this.hasAttributes()
+        || this.hasPseudoClasses() || this.hasPseudoElement()) {
+      throw new Error(this.invalidOrderError);
+    }
+
+    this.Helement = value;
     return this;
   }
 
   id(value) {
-    this.content = `${this.content}#${value}`;
+    if (this.hasId()) {
+      throw new Error(this.invalidArgument);
+    }
+
+    if (this.hasClasses() || this.hasAttributes()
+        || this.hasPseudoClasses() || this.hasPseudoElement()) {
+      throw new Error(this.invalidOrderError);
+    }
+
+    this.Hid = value;
+
     return this;
   }
 
   class(value) {
-    this.content = `${this.content}.${value}`;
+    if (this.hasAttributes() || this.hasPseudoClasses() || this.hasPseudoElement()) {
+      throw new Error(this.invalidOrderError);
+    }
+    this.Hclasses.push(value);
     return this;
   }
 
   attr(value) {
-    this.content = `${this.content}[${value}]`;
+    if (this.hasPseudoClasses() || this.hasPseudoElement()) {
+      throw new Error(this.invalidOrderError);
+    }
+    this.Hattrs.push(value);
     return this;
   }
 
   pseudoClass(value) {
-    this.content = `${this.content}:${value}`;
+    if (this.hasPseudoElement()) {
+      throw new Error(this.invalidOrderError);
+    }
+    this.HpseudoClasses.push(value);
     return this;
   }
 
   pseudoElement(value) {
-    this.content = `${this.content}::${value}`;
+    if (this.hasPseudoElement()) {
+      throw new Error(this.invalidArgument);
+    }
+    this.HpseudoElement = value;
     return this;
   }
 
   stringify() {
-    return this.content;
+    const elementPart = this.hasElement() ? this.Helement : '';
+    const idPart = this.hasId() ? `#${this.Hid}` : '';
+    const classPart = this.Hclasses.map((x) => `.${x}`).join('');
+    const attrPart = this.Hattrs.map((x) => `[${x}]`).join('');
+    const pseudoClassPart = this.HpseudoClasses.map((x) => `:${x}`).join('');
+    const pseudoElementPart = this.hasPseudoElement() ? `::${this.HpseudoElement}` : '';
+    // console.log('ElementPart:', elementPart);
+    return `${elementPart}${idPart}${classPart}${attrPart}${pseudoClassPart}${pseudoElementPart}`;
   }
 }
+
 const cssSelectorBuilder = {
   element(value) {
     const instance = new CssBuilder();
@@ -195,11 +273,11 @@ const cssSelectorBuilder = {
   },
 
   combine(selector1, combinator, selector2) {
-    const instance = CssBuilder.combine(selector1, combinator, selector2);
-    return instance;
+    const combine = new CssCombination(selector1, combinator, selector2);
+    // console.log(combine);
+    return combine;
   },
 };
-
 
 module.exports = {
   Rectangle,
